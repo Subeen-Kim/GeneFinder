@@ -2,7 +2,7 @@
 """
 YOUR HEADER COMMENT HERE
 
-@author: YOUR NAME HERE
+@author: Subeen Kim
 
 """
 
@@ -19,7 +19,6 @@ def shuffle_string(s):
 
 # YOU WILL START YOUR IMPLEMENTATION FROM HERE DOWN ###
 
-
 def get_complement(nucleotide):
     """ Returns the complementary nucleotide
 
@@ -30,9 +29,16 @@ def get_complement(nucleotide):
     >>> get_complement('C')
     'G'
     """
-    # TODO: implement this
-    pass
-
+    if nucleotide == 'A':
+        return ('T')
+    elif nucleotide == 'C':
+        return ('G')
+    elif nucleotide == 'G':
+        return ('C')
+    elif nucleotide == 'T':
+        return ('A')
+    else:
+        return ('-')
 
 def get_reverse_complement(dna):
     """ Computes the reverse complementary sequence of DNA for the specfied DNA
@@ -45,9 +51,13 @@ def get_reverse_complement(dna):
     >>> get_reverse_complement("CCGCGTTCA")
     'TGAACGCGG'
     """
-    # TODO: implement this
-    pass
-
+    compdna = ''
+    for base in dna:
+        compdna = compdna + get_complement(base)
+        dnalist = list(compdna)
+        dnalist.reverse()
+        revcomp = ''.join(dnalist)
+    return revcomp
 
 def rest_of_ORF(dna):
     """ Takes a DNA sequence that is assumed to begin with a start
@@ -62,9 +72,21 @@ def rest_of_ORF(dna):
     >>> rest_of_ORF("ATGAGATAGG")
     'ATGAGA'
     """
-    # TODO: implement this
-    pass
+    segnumb = len(dna)//3
+    index = 0
+    segments = []
 
+    while index <= segnumb:
+        codon = dna[(3*index):(3*(index+1))]
+        if  codon in ['TAA', 'TAG', 'TGA']:
+            break
+        else:
+            segments.append(codon)
+            index = index+1
+
+    snippetDNA = ''.join(segments)
+
+    return snippetDNA
 
 def find_all_ORFs_oneframe(dna):
     """ Finds all non-nested open reading frames in the given DNA
@@ -79,9 +101,21 @@ def find_all_ORFs_oneframe(dna):
     >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
     """
-    # TODO: implement this
-    pass
+    segnumb = len(dna)//3
+    index = 0
+    oneframe = []
+    while index <= segnumb:
 
+        fragment = dna[(3*index):]
+
+        if dna[(3*index):(3*(index+1))] == 'ATG':
+            oneframe.append(rest_of_ORF(fragment))
+            index = index + len(rest_of_ORF(fragment))//3
+
+        else:
+            index = index + 1
+
+    return oneframe
 
 def find_all_ORFs(dna):
     """ Finds all non-nested open reading frames in the given DNA sequence in
@@ -96,9 +130,16 @@ def find_all_ORFs(dna):
     >>> find_all_ORFs("ATGCATGAATGTAG")
     ['ATGCATGAATGTAG', 'ATGAATGTAG', 'ATG']
     """
-    # TODO: implement this
-    pass
+    orfs = []
 
+    index = 0
+
+    while index < 3:
+        dnastring = ''.join(find_all_ORFs_oneframe(dna[index:]))
+        orfs.append(dnastring)
+        index = index + 1
+
+    return orfs
 
 def find_all_ORFs_both_strands(dna):
     """ Finds all non-nested open reading frames in the given DNA sequence on both
@@ -109,8 +150,15 @@ def find_all_ORFs_both_strands(dna):
     >>> find_all_ORFs_both_strands("ATGCGAATGTAGCATCAAA")
     ['ATGCGAATG', 'ATGCTACATTCGCAT']
     """
-    # TODO: implement this
-    pass
+    allorfs = []
+
+    originalorfs = ''.join(find_all_ORFs(dna))
+    allorfs.append(originalorfs)
+
+    reversorfs = ''.join(find_all_ORFs(get_reverse_complement(dna)))
+    allorfs.append(reversorfs)
+
+    return allorfs
 
 
 def longest_ORF(dna):
@@ -163,4 +211,5 @@ def gene_finder(dna):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    doctest.testmod(verbose=True)
+    #doctest.run_docstring_examples(,)
