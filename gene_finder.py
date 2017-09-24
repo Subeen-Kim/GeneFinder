@@ -268,8 +268,6 @@ def gene_finder(dna):
     for sequence in find_all_ORFs_both_strands(dna):
         if len(sequence) >= threshold:
             aminoacids.append(coding_strand_to_AA(sequence))
-        else:
-            continue
 
     return aminoacids
 
